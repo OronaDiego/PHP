@@ -34,12 +34,35 @@ El proyecto está optimizado para ejecutarse en **hosting compartido**, implemen
 ## 🧠 Decisiones técnicas destacadas
 
 ### 📦 Cache por archivo
+
 Para evitar realizar una llamada a la API en cada request, se implementó un sistema de cache simple basado en archivos:
 
 - Cache almacenado en `cache/marvel.json`
-- Tiempo de expiración: **1 hora**
+- Tiempo de expiración: **7 dias**
 - Si la API falla, se utiliza el último cache válido
 - Ideal para entornos de bajo consumo como hosting compartido
 
 ```php
-$cacheTime = 3600; // 1 hora
+$cacheTime = 604800; // 7 dias
+```
+
+604800
+
+## 🧠 Cálculo dinámico de días restantes
+
+Aunque la API devuelve el campo `days_until`, el proyecto recalcula dinámicamente los días restantes utilizando la fecha de estreno (`release_date`) y la fecha actual del servidor.
+
+Esto permite:
+
+- Extender el tiempo de cache sin perder precisión
+- Evitar depender de valores dinámicos de la API
+- Mantener el contador de días siempre actualizado
+
+Implementación:
+
+```php
+$releaseDate = new DateTime($data['release_date']);
+$today = new DateTime();
+
+$daysUntil = $today->diff($releaseDate)->days;
+```
