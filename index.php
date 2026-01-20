@@ -7,7 +7,7 @@ $API_URL = "https://whenisthenextmcufilm.com/api";
 // CACHE
 $cacheDir  = __DIR__ . '/cache';
 $cacheFile = $cacheDir . '/marvel.json';
-$cacheTime = 3600; // 1 hora
+$cacheTime = 604800; // 7 Dias
 
 // Creo carpeta cache si no existe
 if (!is_dir($cacheDir)) {
@@ -51,6 +51,11 @@ if (!$data || !isset($data['title'])) {
     echo "No se pudo cargar la información.";
     exit;
 }
+
+// Cálculo dinámico de días
+$releaseDate = new DateTime($data['release_date']);
+$today = new DateTime();
+$daysUntil = $today->diff($releaseDate)->days;
 
 ?>
 
