@@ -3,36 +3,56 @@
 
 $API_URL = "https://whenisthenextmcufilm.com/api";
 
-# Inicializo una nueva sesión de CURL; ch = Curl handle
-$ch = curl_init($API_URL);
 
-//Desactivo la verificacion SSL
-curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+// CACHE
+$cacheDir  = __DIR__ . '/cache';
+$cacheFile = $cacheDir . '/marvel.json';
+$cacheTime = 3600; // 1 hora
 
-curl_setopt_array($ch, [
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; PHP cURL)',
-]);
-
-$result = curl_exec($ch);
-
-// Chequeo de error
-if ($result === false) {
-    echo 'Curl error: ' . curl_error($ch);
-    curl_close($ch);
-    exit;
+// Creo carpeta cache si no existe
+if (!is_dir($cacheDir)) {
+    mkdir($cacheDir, 0755, true);
 }
 
-curl_close($ch);
+// Si el cache existe y es válido
+if (file_exists($cacheFile) && (time() - filemtime($cacheFile) < $cacheTime)) {
+
+    $result = file_get_contents($cacheFile);
+
+} else {
+
+    // --- CURL ---
+    $ch = curl_init($API_URL);
+
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; PHP cURL)',
+        CURLOPT_SSL_VERIFYPEER => false, // solo hosting compartido
+    ]);
+
+    $result = curl_exec($ch);
+
+    // Si falla la API pero existe cache viejo → lo uso
+    if ($result === false && file_exists($cacheFile)) {
+        $result = file_get_contents($cacheFile);
+    }
+
+    curl_close($ch);
+
+    // Guardo cache solo si vino algo válido
+    if ($result !== false) {
+        file_put_contents($cacheFile, $result);
+    }
+}
 
 $data = json_decode($result, true);
 
-//Altenativa mas sencilla utilizar file_get_contents
-//$result = file_get_contents(API_URL);
-//Si solo queremos hacer un GET de una API
+if (!$data || !isset($data['title'])) {
+    echo "No se pudo cargar la información.";
+    exit;
+}
+
 ?>
-
-
 
 
 <head>
