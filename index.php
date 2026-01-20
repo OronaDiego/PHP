@@ -78,7 +78,7 @@ $daysUntil = $today->diff($releaseDate)->days;
     </section>
 
     <hgroup>
-        <h3><?= $data["title"]; ?> Se estrena en <?= $data["days_until"]; ?> Dias</h3>
+        <h3><?= $data["title"]; ?> Se estrena en <?= $daysUntil; ?> Dias</h3>
         <p>Fecha de estreno <?= $data["release_date"]; ?></p>
         <p>La siguiente es: <?= $data["following_production"]["title"]; ?></p>
     </hgroup>
