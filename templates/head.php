@@ -1,5 +1,5 @@
 <head>
-    <title>La Proxima pelicula de Marvel <?= $data["title"]; ?></title>
+    <title>La Proxima pelicula de Marvel <?= $title; ?></title>
     <meta name="description" content="La Proxima Pelicula de marvel">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Centered viewport -->

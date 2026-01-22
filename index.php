@@ -1,7 +1,6 @@
 <?php 
 require_once __DIR__ . '/functions.php';
-
-$API_URL = "https://whenisthenextmcufilm.com/api";
+require 'const.php';
 
 // CACHE config
 $cacheDir  = __DIR__ . '/cache';
@@ -23,13 +22,10 @@ if (!$data || !isset($data['title'])) {
     exit;
 }
 
-// Cálculo de días
-$daysUntil = calculateDaysUntil($data['release_date']);
-
 ?>
 
-<?php require 'sections/head.php';?>
-<?php require 'sections/styles.php';?>
-<?php require 'sections/main.php';?>
+<?php render_template('head',$data);?>
+<?php render_template('main', $data);?>
+<?php render_template('styles');?>
 
 
